@@ -11,6 +11,11 @@ PYTHON_BIN="${PYTHON_BIN:-python3}"
 if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
   if command -v python >/dev/null 2>&1; then
     PYTHON_BIN="python"
+  elif command -v apt-get >/dev/null 2>&1; then
+    echo "📦 Installing python3..."
+    apt-get update >/dev/null
+    apt-get install -y python3 python3-pip >/dev/null
+    PYTHON_BIN="python3"
   else
     echo "❌ Neither python3 nor python is available on PATH."
     exit 1
