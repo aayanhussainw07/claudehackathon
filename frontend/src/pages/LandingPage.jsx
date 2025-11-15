@@ -47,6 +47,8 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
       top: 0,
       behavior: 'smooth'
     })
+  }
+
   const handleRetake = () => {
     onRetakeQuiz?.()
     navigate('/quiz')
