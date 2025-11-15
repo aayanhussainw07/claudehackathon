@@ -116,7 +116,7 @@ function MapView() {
             NYC Housing Map
           </h1>
           <p className="text-sm text-gray-500 mb-6">
-            Powered by claudehackathon-mlmodel and NYC-only data sources.
+            Powered by our prediction model and NYC-only data sources.
           </p>
 
           {/* Filters */}
@@ -313,7 +313,7 @@ function MapView() {
               </div>
             ) : (
               <p className="text-sm text-slate-500">
-                Hover to preview AI-backed insights for this neighborhood.
+                Hover to preview detailed insights for this neighborhood.
               </p>
             )}
           </div>

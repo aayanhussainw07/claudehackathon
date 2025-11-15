@@ -71,11 +71,11 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
           >
             <p className="uppercase tracking-[0.4em] text-sm text-green-200 mb-4">NYC Housing Website</p>
             <h1 className="text-4xl md:text-6xl font-black leading-tight">
-              Match with NYC neighborhoods based on lifestyle weights powered by Claude.
+              Match with NYC neighborhoods based on your lifestyle preferences.
             </h1>
             <p className="mt-6 text-lg text-green-100 max-w-3xl">
               This is a website built solely for New York City housing decisions. Take a weighted lifestyle quiz,
-              build a Claude-backed persona portfolio, and explore affordability predictions on an interactive map.
+              build a personalized neighborhood portfolio, and explore affordability predictions on an interactive map.
             </p>
           </motion.div>
           <motion.div 
@@ -183,8 +183,8 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
               </motion.button>
             </motion.div>
 
-            {/* Step 2: Claude Portfolio */}
-            <motion.div 
+            {/* Step 2: Personal Portfolio */}
+            <motion.div
               className="text-center p-6"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -192,12 +192,12 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
               transition={{ duration: 0.6, delay: 0.1 }}
               whileHover={{ scale: 1.05, y: -5 }}
             >
-              <div className="text-5xl mb-4">🤖</div>
+              <div className="text-5xl mb-4">📊</div>
               <h2 className="text-2xl font-black text-white mb-4">
-                Claude Portfolio
+                Personal Portfolio
               </h2>
               <p className="text-sm text-green-200 mb-6 leading-relaxed">
-                We aggregate NYC-only data sources then feed the signals into Claude with your weights to create personalized neighborhood insights.
+                We aggregate NYC-only data sources and combine them with your lifestyle weights to create personalized neighborhood insights.
               </p>
               <motion.button
                 onClick={() => navigate('/portfolio')}
@@ -223,7 +223,7 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
                 Housing Explorer
               </h2>
               <p className="text-sm text-green-200 mb-6 leading-relaxed">
-                Predict values with the claudehackathon-mlmodel, filter for boroughs, and dive into the interactive map to find your perfect home.
+                Predict values with our machine learning model, filter for boroughs, and dive into the interactive map to find your perfect home.
               </p>
               <motion.button
                 onClick={() => navigate('/map')}
@@ -310,14 +310,14 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
               </motion.div>
             ))}
           </div>
-          <motion.p 
+          <motion.p
             className="text-xs text-slate-400 mt-8 text-center"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 1 }}
           >
-            Bring your own Claude API key via environment variables to generate live insights from these sources.
+            Our system analyzes these sources to generate live neighborhood insights.
           </motion.p>
         </motion.div>
       </section>
@@ -344,14 +344,14 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
                 gradient: "from-green-500/20 to-emerald-600/20"
               },
               {
-                title: "Claude Integration", 
-                description: "Claude digests Reddit, newsletters, and DOT releases to describe how your persona fits each borough.",
+                title: "Smart Data Analysis",
+                description: "Our system analyzes Reddit, newsletters, and DOT releases to describe how your persona fits each borough.",
                 icon: "🧠",
                 gradient: "from-primary/20 to-green-700/20"
               },
               {
                 title: "ML Price Model",
-                description: "claudehackathon-mlmodel powers the housing predictor so your map stays NYC-specific.",
+                description: "Our machine learning model powers the housing predictor so your map stays NYC-specific.",
                 icon: "📊",
                 gradient: "from-green-600/20 to-green-800/20"
               }
