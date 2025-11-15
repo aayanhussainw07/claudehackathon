@@ -45,7 +45,10 @@ def load_app_state():
                 return json.load(f)
             except json.JSONDecodeError:
                 pass
-    return {'quiz_results': None}
+    return {
+        'quiz_results': None,
+        'reviews': {}
+    }
 
 def save_app_state():
     os.makedirs('data', exist_ok=True)
@@ -54,11 +57,64 @@ def save_app_state():
 
 app_state = load_app_state()
 
+<<<<<<< HEAD
 # -------------------------------
 # AUTH ROUTES
 # -------------------------------
 
 @app.route('/api/auth/signup', methods=['POST', 'OPTIONS'])
+=======
+# Initialize with some sample reviews if none exist
+if 'reviews' not in app_state or not app_state['reviews']:
+    app_state['reviews'] = {
+        'Williamsburg': [
+            {
+                'author': 'Sarah M.',
+                'rating': 5,
+                'comment': 'Love the artsy vibe and amazing food scene! Tons of great coffee shops and easy access to Manhattan via the L train.',
+                'date': '2025-10-15T14:30:00'
+            },
+            {
+                'author': 'Mike T.',
+                'rating': 4,
+                'comment': 'Great neighborhood but can get pretty crowded on weekends. Nightlife is fantastic though!',
+                'date': '2025-10-01T18:45:00'
+            }
+        ],
+        'Astoria': [
+            {
+                'author': 'Elena K.',
+                'rating': 5,
+                'comment': 'Best Greek food in NYC! Very diverse community and more affordable than Manhattan. Love it here.',
+                'date': '2025-09-20T12:00:00'
+            },
+            {
+                'author': 'David L.',
+                'rating': 4,
+                'comment': 'Great value for money, authentic restaurants, and close to the park. Just wish the subway was closer to some parts.',
+                'date': '2025-09-12T09:30:00'
+            }
+        ],
+        'Park Slope': [
+            {
+                'author': 'Jennifer W.',
+                'rating': 5,
+                'comment': 'Perfect for families! Beautiful brownstones, great schools, and Prospect Park is amazing. Very safe neighborhood.',
+                'date': '2025-10-28T16:20:00'
+            },
+            {
+                'author': 'Tom R.',
+                'rating': 5,
+                'comment': 'Charming neighborhood with a real community feel. Farmers market on weekends is fantastic!',
+                'date': '2025-10-10T11:15:00'
+            }
+        ]
+    }
+    save_app_state()
+
+# Auth Routes
+@app.route('/api/auth/signup', methods=['POST'])
+>>>>>>> reviewsystem
 def signup():
     if request.method == "OPTIONS":
         return '', 200
@@ -289,6 +345,55 @@ def generate_mock_summary(neighborhood):
         'sources': ['Reddit: r/nyc', 'Facebook: NYC Housing Groups']
     }
 
+
+@app.route('/api/neighborhood/<name>/reviews', methods=['GET'])
+def get_neighborhood_reviews(name):
+    """
+    Get all reviews for a specific neighborhood
+    """
+    reviews = app_state.get('reviews', {}).get(name, [])
+    return jsonify({'reviews': reviews}), 200
+
+@app.route('/api/neighborhood/<name>/reviews', methods=['POST'])
+def submit_neighborhood_review(name):
+    """
+    Submit a review for a specific neighborhood
+    """
+    data = request.get_json()
+    author = data.get('author', 'Anonymous')
+    if not author.strip():
+        author = 'Anonymous'
+    rating = data.get('rating', 5)
+    comment = data.get('comment', '')
+
+    if not comment.strip():
+        return jsonify({'error': 'Review comment is required'}), 400
+
+    # Validate rating input
+    try:
+        rating_int = int(rating)
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Rating must be an integer between 1 and 5'}), 400
+    if not (1 <= rating_int <= 5):
+        return jsonify({'error': 'Rating must be between 1 and 5'}), 400
+
+    review = {
+        'author': author,
+        'rating': rating_int,
+        'comment': comment,
+        'date': __import__('datetime').datetime.now().isoformat()
+    }
+
+    if 'reviews' not in app_state:
+        app_state['reviews'] = {}
+
+    if name not in app_state['reviews']:
+        app_state['reviews'][name] = []
+
+    app_state['reviews'][name].insert(0, review)
+    save_app_state()
+
+    return jsonify({'review': review, 'message': 'Review submitted successfully'}), 201
 
 # -------------------------------
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { portfolioAPI, housingAPI } from '../utils/api'
+import NeighborhoodModal from '../components/NeighborhoodModal'
 
 const DEFAULT_HOUSING_PREFS = {
   budget: 500000,
@@ -18,6 +19,7 @@ function Portfolio({ onRetakeQuiz }) {
   const [predictions, setPredictions] = useState([])
   const [predictionError, setPredictionError] = useState('')
   const [predictionLoading, setPredictionLoading] = useState(true)
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -166,7 +168,11 @@ function Portfolio({ onRetakeQuiz }) {
             <h3 className="text-xl font-semibold text-slate-900 mb-4">Top neighborhoods</h3>
             <div className="space-y-4">
               {(portfolio.top_neighborhoods || []).map((hood) => (
-                <div key={hood.name} className="border border-slate-100 rounded-2xl p-4">
+                <div
+                  key={hood.name}
+                  className="border border-slate-100 rounded-2xl p-4 cursor-pointer hover:border-green-300 hover:bg-green-50 transition-all duration-200"
+                  onClick={() => setSelectedNeighborhood(hood)}
+                >
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-lg font-semibold text-slate-900">{hood.name}</p>
@@ -189,6 +195,9 @@ function Portfolio({ onRetakeQuiz }) {
                     <span>Transit {hood.highlights?.transit ?? '—'}</span>
                     <span>Nightlife {hood.highlights?.nightlife ?? '—'}</span>
                     <span>Parks {hood.highlights?.parks ?? '—'}</span>
+                  </div>
+                  <div className="mt-3 text-center">
+                    <span className="text-sm text-green-600 font-medium">Click to view details & reviews →</span>
                   </div>
                 </div>
               ))}
@@ -300,6 +309,14 @@ function Portfolio({ onRetakeQuiz }) {
           </div>
         </div>
       </div>
+
+      {/* Neighborhood Modal */}
+      {selectedNeighborhood && (
+        <NeighborhoodModal
+          neighborhood={selectedNeighborhood}
+          onClose={() => setSelectedNeighborhood(null)}
+        />
+      )}
     </div>
   )
 }

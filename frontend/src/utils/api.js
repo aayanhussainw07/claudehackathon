@@ -47,6 +47,12 @@ export const housingAPI = {
 
   getNeighborhood: (name) =>
     api.get(`/neighborhood/${encodeURIComponent(name)}`),
+
+  getNeighborhoodReviews: (name) =>
+    api.get(`/neighborhood/${encodeURIComponent(name)}/reviews`),
+
+  submitNeighborhoodReview: (name, reviewData) =>
+    api.post(`/neighborhood/${encodeURIComponent(name)}/reviews`, reviewData),
 }
 
 export const portfolioAPI = {
