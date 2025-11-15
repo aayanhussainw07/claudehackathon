@@ -27,13 +27,14 @@ fi
 
 VENV_PATH="$BACKEND_DIR/.venv"
 
-if [ ! -d "$VENV_PATH" ]; then
-  echo "⚙️  Creating virtual environment at $VENV_PATH"
-  "$PYTHON_BIN" -m venv "$VENV_PATH"
-fi
-
 PYTHON_VENV_BIN="$VENV_PATH/bin/python"
 PIP_VENV_BIN="$VENV_PATH/bin/pip"
+
+if [ ! -d "$VENV_PATH" ] || [ ! -x "$PYTHON_VENV_BIN" ]; then
+  echo "⚙️  Creating virtual environment at $VENV_PATH"
+  rm -rf "$VENV_PATH"
+  "$PYTHON_BIN" -m venv "$VENV_PATH"
+fi
 
 if [ ! -x "$PIP_VENV_BIN" ]; then
   echo "🔧 Bootstrapping pip inside the virtual environment..."
