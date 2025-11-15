@@ -342,9 +342,17 @@ def submit_neighborhood_review(name):
     if not comment.strip():
         return jsonify({'error': 'Review comment is required'}), 400
 
+    # Validate rating input
+    try:
+        rating_int = int(rating)
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Rating must be an integer between 1 and 5'}), 400
+    if not (1 <= rating_int <= 5):
+        return jsonify({'error': 'Rating must be between 1 and 5'}), 400
+
     review = {
         'author': author,
-        'rating': min(5, max(1, int(rating))),
+        'rating': rating_int,
         'comment': comment,
         'date': __import__('datetime').datetime.now().isoformat()
     }
