@@ -226,6 +226,7 @@ const NeighborhoodModal = ({ neighborhood, onClose }) => {
                           type="button"
                           onClick={() => setNewReview({ ...newReview, rating: star })}
                           className="text-2xl focus:outline-none"
+                          aria-label={`Rate ${star} star${star !== 1 ? 's' : ''}`}
                         >
                           {star <= newReview.rating ? '⭐' : '☆'}
                         </button>
