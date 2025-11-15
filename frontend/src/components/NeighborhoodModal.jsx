@@ -5,6 +5,7 @@ const NeighborhoodModal = ({ neighborhood, onClose }) => {
   const [details, setDetails] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [newReview, setNewReview] = useState({
     author: '',
@@ -17,6 +18,7 @@ const NeighborhoodModal = ({ neighborhood, onClose }) => {
     const fetchNeighborhoodData = async () => {
       try {
         setLoading(true);
+        setError(null);
         const [detailsResponse, reviewsResponse] = await Promise.all([
           housingAPI.getNeighborhood(neighborhood.name),
           housingAPI.getNeighborhoodReviews(neighborhood.name)
@@ -25,6 +27,7 @@ const NeighborhoodModal = ({ neighborhood, onClose }) => {
         setReviews(reviewsResponse.data.reviews || []);
       } catch (error) {
         console.error('Error fetching neighborhood data:', error);
+        setError('Failed to load neighborhood data. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -98,6 +101,18 @@ const NeighborhoodModal = ({ neighborhood, onClose }) => {
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
             <p className="mt-4 text-slate-600">Loading neighborhood details...</p>
+          </div>
+        ) : error ? (
+          <div className="p-8 text-center">
+            <div className="text-red-600 text-5xl mb-4">⚠️</div>
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">Unable to Load Data</h3>
+            <p className="text-slate-600 mb-6">{error}</p>
+            <button
+              onClick={onClose}
+              className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
+            >
+              Close
+            </button>
           </div>
         ) : (
           <div className="p-8">
