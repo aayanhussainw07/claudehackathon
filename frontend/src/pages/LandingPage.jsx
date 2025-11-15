@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
+import logo from '../components/logo.png'
 
 const NYC_STATS = [
   { label: 'Boroughs Covered', value: '5', detail: 'Manhattan to Staten Island' },
@@ -69,7 +70,17 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <h1 className="text-4xl md:text-6xl mt-3 font-black leading-tight">
+            <div className="flex items-center gap-4 mb-6">
+              <motion.img 
+                src={logo} 
+                alt="Boroughs Logo" 
+                className="h-12 w-auto"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              />
+            </div>
+            <h1 className="text-4xl md:text-6xl font-black leading-tight">
               Match with NYC neighborhoods based on your lifestyle preferences.
             </h1>
             <p className="mt-6 text-lg text-green-100 max-w-3xl">
