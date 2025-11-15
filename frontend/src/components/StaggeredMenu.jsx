@@ -11,7 +11,7 @@ export const StaggeredMenu = ({
   displayItemNumbering = false,
   className,
   logoText = 'BOROUGHS',
-  menuButtonColor = '#fff',
+  menuButtonColor = '#10B981',
   openMenuButtonColor = '#000',
   changeMenuColorOnOpen = true,
   accentColor = '#10B981',
@@ -358,18 +358,14 @@ export const StaggeredMenu = ({
         </div>
 
         <header
-          className="staggered-menu-header absolute top-0 left-0 w-full flex items-center justify-between p-[2em] bg-transparent z-20"
+          className="staggered-menu-header absolute top-0 left-0 w-full flex items-center justify-start gap-4 p-[2em] bg-transparent z-20"
           aria-label="Main navigation header"
           style={{ pointerEvents: open ? 'auto' : 'none' }}
         >
           <div
-            className={`sm-logo flex items-center select-none pointer-events-auto cursor-pointer px-4 py-2 rounded-full backdrop-blur-md transition-all duration-300 ${
-              open
-                ? 'text-black bg-white/90 hover:bg-white'
-                : 'text-white bg-black/40 hover:bg-black/60'
-            }`}
+            className="sm-logo flex items-center select-none pointer-events-auto cursor-pointer px-4 py-2 rounded-full backdrop-blur-md transition-all duration-300 text-black bg-white hover:bg-white/90"
             aria-label="Logo"
-            onClick={() => !open && navigate('/')}
+            onClick={() => navigate('/')}
           >
             <h1 className="text-xl font-black tracking-wider">{logoText}</h1>
           </div>
@@ -378,8 +374,8 @@ export const StaggeredMenu = ({
             ref={toggleBtnRef}
             className={`sm-toggle relative inline-flex items-center gap-[0.3rem] border-0 cursor-pointer font-medium leading-none overflow-visible pointer-events-auto text-sm px-4 py-2 rounded-full backdrop-blur-md transition-all duration-300 ${
               open
-                ? 'text-black bg-white/90 hover:bg-white'
-                : 'text-white bg-black/40 hover:bg-black/60'
+                ? 'text-black bg-white hover:bg-white/90'
+                : 'text-green-500 bg-black/80 hover:bg-black/90'
             }`}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
