@@ -1,7 +1,66 @@
+import importlib
 import joblib
 import pandas as pd
 import numpy as np
 import os
+
+
+def _register_bitgenerator(alias) -> bool:
+    """
+    Register legacy numpy BitGenerator names that may appear inside
+    pickled sklearn pipelines. Returns True if a new alias was added.
+    """
+    try:
+        import numpy.random._pickle as np_random_pickle
+    except Exception:
+        return False
+
+    alias_str = alias.strip() if isinstance(alias, str) else repr(alias).strip()
+    alias = alias_str
+    if not alias:
+        return False
+
+    # Standard names (e.g., 'MT19937') already exist; short-circuit
+    if alias in np_random_pickle.BitGenerators:
+        return True
+
+    target = alias
+    if alias.startswith("<class '") and alias.endswith("'>"):
+        target = alias[8:-2]
+
+    try:
+        module_name, class_name = target.rsplit('.', 1)
+        module = importlib.import_module(module_name)
+        bit_generator_cls = getattr(module, class_name)
+    except Exception:
+        return False
+
+    np_random_pickle.BitGenerators[alias] = bit_generator_cls
+    np_random_pickle.BitGenerators.setdefault(class_name, bit_generator_cls)
+    return True
+
+# Ensure common aliases are registered up front
+try:
+    import numpy.random._pickle as _np_random_pickle
+except Exception:
+    _np_random_pickle = None
+
+_register_bitgenerator("<class 'numpy.random._mt19937.MT19937'>")
+
+if _np_random_pickle is not None:
+    _original_bit_generator_ctor = _np_random_pickle.__bit_generator_ctor
+
+    def _patched_bit_generator_ctor(bit_generator_name='MT19937'):
+        if bit_generator_name not in _np_random_pickle.BitGenerators:
+            _register_bitgenerator(bit_generator_name)
+        normalized = bit_generator_name
+        if normalized not in _np_random_pickle.BitGenerators:
+            normalized = repr(bit_generator_name).strip()
+        if isinstance(normalized, str):
+            normalized = normalized.strip()
+        return _original_bit_generator_ctor(normalized)
+
+    _np_random_pickle.__bit_generator_ctor = _patched_bit_generator_ctor
 
 class HousingPredictor:
     def __init__(self, model_path='models/advanced_house_price_model.joblib'):
@@ -19,6 +78,16 @@ class HousingPredictor:
                 self.model = joblib.load(self.model_path)
                 print("Model loaded successfully!")
             except Exception as e:
+                # Handle legacy numpy bit generator aliases emitted by older sklearn toolchains
+                if isinstance(e, ValueError) and 'BitGenerator' in str(e):
+                    alias = str(e).split(' is not a known BitGenerator', 1)[0]
+                    if _register_bitgenerator(alias):
+                        try:
+                            self.model = joblib.load(self.model_path)
+                            print("Model loaded successfully after BitGenerator shim!")
+                            return
+                        except Exception as retry_err:
+                            print(f"Retry failed when loading model: {retry_err}")
                 print(f"Error loading model: {e}")
                 self.model = None
         else:

@@ -22,6 +22,26 @@ code {
   z-index: 0;
 }
 
+@keyframes cardFlipIn {
+  0% {
+    opacity: 0;
+    transform: rotateX(-15deg) translateY(-10px) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: rotateX(5deg) translateY(2px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: rotateX(0deg) translateY(0) scale(1);
+  }
+}
+
+.hover-card {
+  animation: cardFlipIn 0.5s ease-out both;
+  transform-origin: top right;
+}
+
 /* Custom range input styling to ensure green color */
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;

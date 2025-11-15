@@ -1,11 +1,23 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { portfolioAPI } from '../utils/api'
+import { portfolioAPI, housingAPI } from '../utils/api'
 
-function Portfolio() {
+const DEFAULT_HOUSING_PREFS = {
+  budget: 500000,
+  beds: 2,
+  baths: 1,
+  propertyType: 'CONDO',
+  propertySqft: 1000,
+  yearsFuture: 0
+}
+
+function Portfolio({ onRetakeQuiz }) {
   const [portfolio, setPortfolio] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [predictions, setPredictions] = useState([])
+  const [predictionError, setPredictionError] = useState('')
+  const [predictionLoading, setPredictionLoading] = useState(true)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -20,8 +32,33 @@ function Portfolio() {
         setLoading(false)
       }
     }
+
+    const fetchPredictions = async () => {
+      setPredictionError('')
+      setPredictionLoading(true)
+      try {
+        const storedPrefs = JSON.parse(localStorage.getItem('housingPreferences'))
+        const prefs = storedPrefs || DEFAULT_HOUSING_PREFS
+        if (!storedPrefs) {
+          localStorage.setItem('housingPreferences', JSON.stringify(prefs))
+        }
+        const response = await housingAPI.predict(prefs)
+        setPredictions(response.data.predictions.slice(0, 3))
+      } catch (err) {
+        setPredictionError('Unable to load budget-aligned recommendations')
+      } finally {
+        setPredictionLoading(false)
+      }
+    }
+
     fetchPortfolio()
+    fetchPredictions()
   }, [])
+
+  const handleRetake = () => {
+    onRetakeQuiz?.()
+    navigate('/quiz')
+  }
 
   if (loading) {
     return (
@@ -41,7 +78,7 @@ function Portfolio() {
           <h1 className="text-2xl font-bold text-slate-900">Portfolio unavailable</h1>
           <p className="text-slate-500">{error || 'Please retake the lifestyle quiz to generate a portfolio.'}</p>
           <button
-            onClick={() => navigate('/quiz')}
+            onClick={handleRetake}
             className="px-6 py-3 rounded-full bg-primary text-white font-semibold"
           >
             Go to Quiz
@@ -61,6 +98,14 @@ function Portfolio() {
             Weighted quiz signals are sent to claudehackathon-mlmodel plus Claude AI.
             Every insight below references NYC neighborhoods only.
           </p>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={handleRetake}
+              className="px-4 py-2 rounded-full border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100"
+            >
+              Retake Quiz
+            </button>
+          </div>
         </header>
 
         <section className="grid md:grid-cols-3 gap-6">
@@ -149,6 +194,66 @@ function Portfolio() {
               ))}
             </div>
           </div>
+        </section>
+
+        <section className="bg-white rounded-3xl border border-slate-200 p-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+            <div>
+              <h3 className="text-xl font-semibold text-slate-900">Budget-aligned options (auto)</h3>
+              <p className="text-sm text-slate-500">
+                We fed your latest housing preferences directly into the claudehackathon-mlmodel.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/map')}
+              className="px-5 py-2 rounded-full bg-primary text-white text-sm font-semibold"
+            >
+              View full map
+            </button>
+          </div>
+          {predictionLoading ? (
+            <div className="flex items-center gap-3 text-slate-500">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              <span>Running affordability + lifestyle model…</span>
+            </div>
+          ) : predictionError ? (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 flex items-center justify-between">
+              <span>{predictionError}</span>
+              <button
+                onClick={() => navigate('/housing')}
+                className="px-4 py-2 rounded-full border border-red-300 text-red-700"
+              >
+                Update housing inputs
+              </button>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-4">
+              {predictions.map((prediction) => (
+                <div key={prediction.name} className="border border-slate-100 rounded-2xl p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <p className="text-lg font-semibold text-slate-900">{prediction.name}</p>
+                    <span className="text-xs uppercase tracking-widest text-slate-400">{prediction.color}</span>
+                  </div>
+                  <p className="text-sm text-slate-500">{prediction.details?.admin_area || prediction.borough}</p>
+                  <div className="mt-3 space-y-1 text-sm text-slate-600">
+                    <p>
+                      <span className="font-medium">Predicted price:</span>{' '}
+                      ${prediction.predicted_price.toLocaleString()}
+                    </p>
+                    <p>
+                      <span className="font-medium">Affordability:</span> {prediction.affordability_score}
+                    </p>
+                    <p>
+                      <span className="font-medium">Lifestyle:</span> {prediction.lifestyle_score}
+                    </p>
+                    <p>
+                      <span className="font-medium">Combined:</span> {prediction.combined_score}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="bg-white rounded-3xl border border-slate-200 p-8">

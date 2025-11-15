@@ -12,7 +12,7 @@ const SOURCE_FEED = [
   { source: 'Reddit r/nyc', insight: 'Scanning neighborhood Q&A threads for sentiment shifts.' },
 ]
 
-function LandingPage({ quizCompleted }) {
+function LandingPage({ quizCompleted, onRetakeQuiz }) {
   const navigate = useNavigate()
 
   const handlePrimaryCTA = () => {
@@ -25,6 +25,11 @@ function LandingPage({ quizCompleted }) {
 
   const handleMapCTA = () => {
     navigate('/map')
+  }
+
+  const handleRetake = () => {
+    onRetakeQuiz?.()
+    navigate('/quiz')
   }
 
   return (
@@ -49,6 +54,14 @@ function LandingPage({ quizCompleted }) {
             >
               {quizCompleted ? 'View My NYC Portfolio' : 'Start Quiz'}
             </button>
+            {quizCompleted && (
+              <button
+                onClick={handleRetake}
+                className="px-8 py-3 rounded-full border border-white/50 text-white font-semibold hover:bg-white/10 transition"
+              >
+                Retake Quiz
+              </button>
+            )}
             <button
               onClick={handleMapCTA}
               className="px-8 py-3 rounded-full border border-white/40 text-white font-semibold hover:bg-white/10 transition"

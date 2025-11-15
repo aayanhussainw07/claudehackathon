@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react'
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet'
+import { useState, useEffect, useRef } from 'react'
+import { MapContainer, TileLayer, CircleMarker } from 'react-leaflet'
 import { housingAPI } from '../utils/api'
 import 'leaflet/dist/leaflet.css'
 
 function MapView() {
   const [predictions, setPredictions] = useState([])
   const [loading, setLoading] = useState(true)
-  const [selectedNeighborhood, setSelectedNeighborhood] = useState(null)
   const [filterMode, setFilterMode] = useState('all') // all, affordable, compatible
+  const [hoveredNeighborhood, setHoveredNeighborhood] = useState(null)
+  const [hoverLoadingName, setHoverLoadingName] = useState(null)
+  const [neighborhoodDetails, setNeighborhoodDetails] = useState({})
+  const hoverClearTimeout = useRef(null)
 
   useEffect(() => {
     fetchPredictions()
@@ -15,7 +18,15 @@ function MapView() {
 
   const fetchPredictions = async () => {
     try {
-      const housingPrefs = JSON.parse(localStorage.getItem('housingPreferences'))
+      const housingPrefs =
+        JSON.parse(localStorage.getItem('housingPreferences')) ?? {
+          budget: 500000,
+          beds: 2,
+          baths: 1,
+          propertyType: 'CONDO',
+          propertySqft: 1000,
+          yearsFuture: 0,
+        }
       const response = await housingAPI.predict(housingPrefs)
       setPredictions(response.data.predictions)
     } catch (error) {
@@ -38,18 +49,51 @@ function MapView() {
     return true
   })
 
-  const handleMarkerClick = async (prediction) => {
-    setSelectedNeighborhood(prediction)
+  const handleNeighborhoodHover = async (prediction) => {
+    if (hoverClearTimeout.current) {
+      clearTimeout(hoverClearTimeout.current)
+      hoverClearTimeout.current = null
+    }
+
+    setHoveredNeighborhood({
+      ...prediction,
+      ...neighborhoodDetails[prediction.name],
+    })
+
+    if (neighborhoodDetails[prediction.name]) {
+      return
+    }
+
+    setHoverLoadingName(prediction.name)
     try {
       const response = await housingAPI.getNeighborhood(prediction.name)
-      setSelectedNeighborhood({
-        ...prediction,
+      const detailPayload = {
         details: response.data.neighborhood,
         ai_summary: response.data.ai_summary,
+      }
+      setNeighborhoodDetails((prev) => ({
+        ...prev,
+        [prediction.name]: detailPayload,
+      }))
+      setHoveredNeighborhood((prev) => {
+        if (!prev || prev.name !== prediction.name) return prev
+        return { ...prev, ...detailPayload }
       })
     } catch (error) {
       console.error('Error fetching neighborhood details:', error)
+    } finally {
+      setHoverLoadingName(null)
     }
+  }
+
+  const handleNeighborhoodLeave = () => {
+    if (hoverClearTimeout.current) {
+      clearTimeout(hoverClearTimeout.current)
+    }
+    hoverClearTimeout.current = setTimeout(() => {
+      setHoveredNeighborhood(null)
+      setHoverLoadingName(null)
+    }, 200)
   }
 
   if (loading) {
@@ -110,70 +154,6 @@ function MapView() {
             </div>
           </div>
 
-          {/* Selected Neighborhood Details */}
-          {selectedNeighborhood && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <h3 className="text-xl font-bold text-gray-800 mb-2">
-                {selectedNeighborhood.name}
-              </h3>
-
-              <div className="space-y-2 text-sm mb-4">
-                <div className="flex justify-between">
-                  <span className="font-medium">Predicted Price:</span>
-                  <span className="font-bold text-primary">
-                    ${selectedNeighborhood.predicted_price.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Affordability:</span>
-                  <span>{selectedNeighborhood.affordability_score.toFixed(0)}/100</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Lifestyle Match:</span>
-                  <span>{selectedNeighborhood.lifestyle_score.toFixed(0)}/100</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Overall Score:</span>
-                  <span className="font-bold">
-                    {selectedNeighborhood.combined_score.toFixed(0)}/100
-                  </span>
-                </div>
-              </div>
-
-              {selectedNeighborhood.ai_summary && (
-                <div className="mt-4 pt-4 border-t border-green-200">
-                  <h4 className="font-semibold mb-2">AI Summary</h4>
-                  <p className="text-sm text-gray-700 mb-3">
-                    {selectedNeighborhood.ai_summary.overall}
-                  </p>
-
-                  <div className="mb-2">
-                    <h5 className="font-medium text-sm mb-1 text-green-700">Pros:</h5>
-                    <ul className="list-disc list-inside text-sm space-y-1">
-                      {selectedNeighborhood.ai_summary.pros.map((pro, idx) => (
-                        <li key={idx}>{pro}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h5 className="font-medium text-sm mb-1 text-red-700">Cons:</h5>
-                    <ul className="list-disc list-inside text-sm space-y-1">
-                      {selectedNeighborhood.ai_summary.cons.map((con, idx) => (
-                        <li key={idx}>{con}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="mt-3 text-xs text-gray-500">
-                    <p>Sentiment Score: {selectedNeighborhood.ai_summary.sentiment_score}/10</p>
-                    <p>Sources: {selectedNeighborhood.ai_summary.sources.join(', ')}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Top Matches */}
           <div className="mt-6">
             <h3 className="font-semibold text-gray-800 mb-3">
@@ -183,8 +163,12 @@ function MapView() {
               {filteredPredictions.slice(0, 10).map((pred) => (
                 <div
                   key={pred.name}
-                  onClick={() => handleMarkerClick(pred)}
-                  className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition"
+                  onClick={() => handleNeighborhoodHover(pred)}
+                  onMouseEnter={() => handleNeighborhoodHover(pred)}
+                  onMouseLeave={handleNeighborhoodLeave}
+                  className={`p-3 rounded-lg cursor-pointer transition ${
+                    hoveredNeighborhood?.name === pred.name ? 'bg-green-100' : 'bg-gray-50 hover:bg-gray-100'
+                  }`}
                 >
                   <div className="flex justify-between items-start">
                     <div>
@@ -211,7 +195,7 @@ function MapView() {
       </div>
 
       {/* Map */}
-      <div className="flex-1">
+      <div className="flex-1 relative">
         <MapContainer
           center={[40.7128, -74.0060]}
           zoom={11}
@@ -233,23 +217,107 @@ function MapView() {
               opacity={1}
               fillOpacity={0.8}
               eventHandlers={{
-                click: () => handleMarkerClick(prediction),
+                mouseover: () => handleNeighborhoodHover(prediction),
+                mouseout: handleNeighborhoodLeave,
+                click: () => handleNeighborhoodHover(prediction),
               }}
-            >
-              <Popup>
-                <div className="p-2">
-                  <h3 className="font-bold text-gray-800">{prediction.name}</h3>
-                  <p className="text-sm">
-                    ${prediction.predicted_price.toLocaleString()}
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    Score: {prediction.combined_score.toFixed(0)}/100
-                  </p>
-                </div>
-              </Popup>
-            </CircleMarker>
+            />
           ))}
         </MapContainer>
+
+        {hoveredNeighborhood && (
+          <div
+            className="absolute top-4 right-4 w-96 border border-white/40 rounded-3xl shadow-2xl p-5 z-[1000] hover-card"
+            style={{
+              background: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(24px)',
+            }}
+            onMouseEnter={() => {
+              if (hoverClearTimeout.current) {
+                clearTimeout(hoverClearTimeout.current)
+                hoverClearTimeout.current = null
+              }
+            }}
+            onMouseLeave={handleNeighborhoodLeave}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-primary">
+                  {hoveredNeighborhood.details?.admin_area || hoveredNeighborhood.borough || 'NYC'}
+                </p>
+                <h3 className="text-2xl font-bold text-slate-900">
+                  {hoveredNeighborhood.name}
+                </h3>
+              </div>
+              <span
+                className="w-3 h-3 rounded-full mt-1"
+                style={{ backgroundColor: getMarkerColor(hoveredNeighborhood) }}
+              ></span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-sm text-slate-600 mb-4">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-slate-400">Predicted price</p>
+                <p className="text-lg font-semibold text-slate-900">
+                  ${hoveredNeighborhood.predicted_price.toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-slate-400">Overall score</p>
+                <p className="text-lg font-semibold text-slate-900">
+                  {hoveredNeighborhood.combined_score.toFixed(0)}/100
+                </p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-slate-400">Affordability</p>
+                <p className="font-semibold">{hoveredNeighborhood.affordability_score.toFixed(0)}/100</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-slate-400">Lifestyle</p>
+                <p className="font-semibold">{hoveredNeighborhood.lifestyle_score.toFixed(0)}/100</p>
+              </div>
+            </div>
+            {hoverLoadingName === hoveredNeighborhood.name ? (
+              <div className="flex items-center gap-2 text-slate-500 text-sm">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                <span>Pulling local insights…</span>
+              </div>
+            ) : hoveredNeighborhood.ai_summary ? (
+              <div className="text-sm text-slate-600 space-y-2">
+                <p className="font-medium text-slate-900">{hoveredNeighborhood.ai_summary.overall}</p>
+                <div className="flex gap-4 text-xs">
+                  <div className="flex-1">
+                    <p className="font-semibold text-green-700 uppercase tracking-wide text-[0.7rem] mb-1">
+                      Pros
+                    </p>
+                    <ul className="space-y-1 list-disc list-inside">
+                      {hoveredNeighborhood.ai_summary.pros.slice(0, 2).map((pro, idx) => (
+                        <li key={idx}>{pro}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-red-700 uppercase tracking-wide text-[0.7rem] mb-1">
+                      Cons
+                    </p>
+                    <ul className="space-y-1 list-disc list-inside">
+                      {hoveredNeighborhood.ai_summary.cons.slice(0, 2).map((con, idx) => (
+                        <li key={idx}>{con}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Sentiment: {hoveredNeighborhood.ai_summary.sentiment_score}/10 · Sources:{' '}
+                  {hoveredNeighborhood.ai_summary.sources[0]}
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500">
+                Hover to preview AI-backed insights for this neighborhood.
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

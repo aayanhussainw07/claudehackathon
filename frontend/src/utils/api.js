@@ -1,7 +1,16 @@
 import axios from 'axios'
 
-// Use configurable API base URL with sensible default so dev/prod both work
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+const envBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()
+
+// When running locally without an explicit base URL, talk directly to the Flask server
+const localApiBase =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:5000/api'
+    : null
+
+// Default priority: explicit env → known local backend → same-origin proxy
+const API_BASE_URL = (envBaseUrl || localApiBase || '/api').replace(/\/+$/, '')
 
 const api = axios.create({
   baseURL: API_BASE_URL,

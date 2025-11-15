@@ -15,6 +15,11 @@ function App() {
     setQuizCompleted(!!quiz)
   }, [])
 
+  const handleRetakeQuiz = () => {
+    localStorage.removeItem('quizCompleted')
+    setQuizCompleted(false)
+  }
+
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
@@ -41,7 +46,7 @@ function App() {
             element={
               !quizCompleted ?
                 <Navigate to="/quiz" /> :
-                <Portfolio />
+                <Portfolio onRetakeQuiz={handleRetakeQuiz} />
             }
           />
           <Route
@@ -49,6 +54,7 @@ function App() {
             element={
               <LandingPage
                 quizCompleted={quizCompleted}
+                onRetakeQuiz={handleRetakeQuiz}
               />
             }
           />

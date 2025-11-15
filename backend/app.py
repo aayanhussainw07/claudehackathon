@@ -17,7 +17,21 @@ from claude_portfolio import (
 )
 
 app = Flask(__name__)
-CORS(app)
+
+# --- FIXED CORS (WORKS 100%) ---
+CORS(
+    app,
+    resources={r"/api/*": {"origins": "http://localhost:3000"}},
+    supports_credentials=True
+)
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
+    response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+    return response
+
 
 # Initialize ML model
 predictor = HousingPredictor()
@@ -31,9 +45,7 @@ def load_app_state():
                 return json.load(f)
             except json.JSONDecodeError:
                 pass
-    return {
-        'quiz_results': None
-    }
+    return {'quiz_results': None}
 
 def save_app_state():
     os.makedirs('data', exist_ok=True)
@@ -42,54 +54,68 @@ def save_app_state():
 
 app_state = load_app_state()
 
-# Auth Routes
-@app.route('/api/auth/signup', methods=['POST'])
+# -------------------------------
+# AUTH ROUTES
+# -------------------------------
+
+@app.route('/api/auth/signup', methods=['POST', 'OPTIONS'])
 def signup():
+    if request.method == "OPTIONS":
+        return '', 200
+
     data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
+    email = data.get('email') or 'guest@nyc.local'
+    password = data.get('password') or 'guest'
 
-    email = email or 'guest@nyc.local'
-    password = password or 'guest'
-
-    # Authentication is disabled—always succeed with a demo token
     return jsonify({'token': 'demo-token', 'email': email}), 201
 
-@app.route('/api/auth/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
 
-    email = email or 'guest@nyc.local'
-    password = password or 'guest'
+@app.route('/api/auth/login', methods=['POST', 'OPTIONS'])
+def login():
+    if request.method == "OPTIONS":
+        return '', 200
+
+    data = request.get_json()
+    email = data.get('email') or 'guest@nyc.local'
+    password = data.get('password') or 'guest'
 
     return jsonify({'token': 'demo-token', 'email': email}), 200
 
-# Quiz Routes
-@app.route('/api/quiz/submit', methods=['POST'])
-def submit_quiz():
-    quiz_data = request.get_json() or {}
 
+# -------------------------------
+# QUIZ ROUTES
+# -------------------------------
+
+@app.route('/api/quiz/submit', methods=['POST', 'OPTIONS'])
+def submit_quiz():
+    if request.method == "OPTIONS":
+        return '', 200
+
+    quiz_data = request.get_json() or {}
     app_state['quiz_results'] = quiz_data
     save_app_state()
 
     return jsonify({'message': 'Quiz saved successfully'}), 200
+
 
 @app.route('/api/quiz/results', methods=['GET'])
 def get_quiz_results():
     results = app_state.get('quiz_results')
     return jsonify({'results': results}), 200
 
-# Housing Prediction Routes
-@app.route('/api/predict', methods=['POST'])
+
+# -------------------------------
+# PREDICTION ROUTE
+# -------------------------------
+
+@app.route('/api/predict', methods=['POST', 'OPTIONS'])
 def predict_housing():
-    """
-    Generate predictions across NYC neighborhoods based on user preferences
-    """
+    if request.method == "OPTIONS":
+        return '', 200
+
     data = request.get_json()
 
-    # User housing inputs
+    # User inputs
     budget = data.get('budget')
     beds = data.get('beds')
     baths = data.get('baths')
@@ -97,16 +123,12 @@ def predict_housing():
     property_sqft = data.get('propertySqft', 1000)
     years_future = data.get('yearsFuture', 0)
 
-    # Get stored quiz results for lifestyle scoring (if available)
     quiz_results = app_state.get('quiz_results') or {}
-
-    # Get NYC neighborhoods
     neighborhoods = get_nyc_neighborhoods()
 
     predictions = []
 
     for neighborhood in neighborhoods:
-        # Predict price using ML model
         prediction_input = {
             'TYPE': property_type,
             'BEDS': beds,
@@ -122,14 +144,8 @@ def predict_housing():
 
         try:
             predicted_price = predictor.predict(prediction_input, years_future)
-
-            # Calculate affordability score (0-100)
             affordability_score = calculate_affordability_score(predicted_price, budget)
-
-            # Calculate lifestyle compatibility score (0-100)
             lifestyle_score = calculate_compatibility_score(quiz_results, neighborhood)
-
-            # Combined score (weighted average)
             combined_score = (affordability_score * 0.5) + (lifestyle_score * 0.5)
 
             predictions.append({
@@ -143,39 +159,37 @@ def predict_housing():
                 'color': get_color_from_score(combined_score),
                 'details': neighborhood
             })
+
         except Exception as e:
-            print(f"Error predicting for {neighborhood['name']}: {str(e)}")
+            print(f"Error predicting for {neighborhood['name']}: {e}")
             continue
 
-    # Sort by combined score (highest first)
     predictions.sort(key=lambda x: x['combined_score'], reverse=True)
 
     return jsonify({'predictions': predictions}), 200
 
+
+# -------------------------------
+# SCORING HELPERS
+# -------------------------------
+
 def calculate_affordability_score(predicted_price, budget):
-    """
-    Returns 0-100 score based on how affordable the property is
-    100 = well within budget
-    0 = way over budget
-    """
     if budget == 0:
         return 0
-
     ratio = predicted_price / budget
-
-    if ratio <= 0.8:  # 20% under budget
+    if ratio <= 0.8:
         return 100
-    elif ratio <= 1.0:  # Within budget
+    elif ratio <= 1.0:
         return 80
-    elif ratio <= 1.2:  # 20% over budget
+    elif ratio <= 1.2:
         return 50
-    elif ratio <= 1.5:  # 50% over budget
+    elif ratio <= 1.5:
         return 20
     else:
         return 0
 
+
 def get_color_from_score(score):
-    """Returns color code based on compatibility score"""
     if score >= 70:
         return 'green'
     elif score >= 40:
@@ -183,20 +197,19 @@ def get_color_from_score(score):
     else:
         return 'red'
 
-# Neighborhood Details Route
+
+# -------------------------------
+# NEIGHBORHOOD DETAILS
+# -------------------------------
+
 @app.route('/api/neighborhood/<name>', methods=['GET'])
 def get_neighborhood_details(name):
-    """
-    Get detailed info about a specific neighborhood including AI summary
-    """
     neighborhoods = get_nyc_neighborhoods()
     neighborhood = next((n for n in neighborhoods if n['name'] == name), None)
 
     if not neighborhood:
         return jsonify({'error': 'Neighborhood not found'}), 404
 
-    # In a real app, this would scrape Reddit/Facebook or use cached data
-    # For hackathon, we'll use mock data
     ai_summary = generate_mock_summary(neighborhood)
 
     return jsonify({
@@ -204,11 +217,13 @@ def get_neighborhood_details(name):
         'ai_summary': ai_summary
     }), 200
 
+
+# -------------------------------
+# PORTFOLIO ROUTE
+# -------------------------------
+
 @app.route('/api/portfolio', methods=['GET'])
 def get_portfolio():
-    """
-    Build a NYC-only lifestyle portfolio using quiz weights and Claude summaries
-    """
     quiz_results = app_state.get('quiz_results')
 
     if not quiz_results:
@@ -243,7 +258,9 @@ def get_portfolio():
     preference_weights = derive_preference_weights(quiz_results)
     persona = build_persona_profile(preference_weights, quiz_results, top_neighborhoods)
     source_digest = aggregate_source_digest(top_neighborhoods)
-    ai_summary = generate_claude_portfolio_summary(persona, top_neighborhoods, preference_weights, source_digest)
+    ai_summary = generate_claude_portfolio_summary(
+        persona, top_neighborhoods, preference_weights, source_digest
+    )
 
     return jsonify({
         'persona': persona,
@@ -253,10 +270,10 @@ def get_portfolio():
         'ai_summary': ai_summary
     }), 200
 
+
+# -------------------------------
+
 def generate_mock_summary(neighborhood):
-    """
-    Mock AI summary - in production, this would analyze Reddit/Facebook posts
-    """
     return {
         'overall': f"{neighborhood['name']} is a {neighborhood.get('vibe', 'diverse')} neighborhood with good access to amenities.",
         'pros': [
@@ -271,6 +288,9 @@ def generate_mock_summary(neighborhood):
         'sentiment_score': neighborhood.get('sentiment', 7.5),
         'sources': ['Reddit: r/nyc', 'Facebook: NYC Housing Groups']
     }
+
+
+# -------------------------------
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
