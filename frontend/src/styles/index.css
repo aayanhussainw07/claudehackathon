@@ -11,6 +11,24 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Hide scrollbar completely when overflow is hidden */
+html.overflow-hidden,
+body.overflow-hidden {
+  overflow: hidden !important;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+html.overflow-hidden::-webkit-scrollbar,
+body.overflow-hidden::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
