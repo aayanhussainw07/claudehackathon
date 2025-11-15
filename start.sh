@@ -32,13 +32,18 @@ if [ ! -d "$VENV_PATH" ]; then
   "$PYTHON_BIN" -m venv "$VENV_PATH"
 fi
 
+PYTHON_VENV_BIN="$VENV_PATH/bin/python"
+PIP_VENV_BIN="$VENV_PATH/bin/pip"
+
+if [ ! -x "$PIP_VENV_BIN" ]; then
+  echo "🔧 Bootstrapping pip inside the virtual environment..."
+  "$PYTHON_VENV_BIN" -m ensurepip --upgrade
+fi
+
 source "$VENV_PATH/bin/activate"
 
-PIP_BIN="$VENV_PATH/bin/pip"
-PYTHON_VENV_BIN="$VENV_PATH/bin/python"
-
 if [ -f requirements.txt ]; then
-  "$PIP_BIN" install --no-cache-dir -r requirements.txt
+  "$PYTHON_VENV_BIN" -m pip install --no-cache-dir -r requirements.txt
 fi
 
 exec "$PYTHON_VENV_BIN" app.py
