@@ -65,7 +65,7 @@ function Portfolio({ onRetakeQuiz }) {
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-slate-600">Consolidating NYC sources with Claude…</p>
+          <p className="text-slate-600">Analyzing NYC data sources…</p>
         </div>
       </div>
     )
@@ -95,7 +95,7 @@ function Portfolio({ onRetakeQuiz }) {
           <p className="uppercase text-sm tracking-[0.3em] text-primary">NYC Only</p>
           <h1 className="text-4xl font-black text-slate-900">Your NYC housing portfolio</h1>
           <p className="text-slate-600 max-w-2xl">
-            Weighted quiz signals are sent to claudehackathon-mlmodel plus Claude AI.
+            Weighted quiz signals are processed by our matching system.
             Every insight below references NYC neighborhoods only.
           </p>
           <div className="flex flex-wrap gap-3">
@@ -126,9 +126,9 @@ function Portfolio({ onRetakeQuiz }) {
             </div>
           </div>
           <div className="bg-slate-900 text-white rounded-3xl p-8 border border-slate-800 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4">Claude summary</h3>
+            <h3 className="text-xl font-semibold mb-4">Personalized Summary</h3>
             <p className="text-sm uppercase tracking-[0.4em] text-green-300 mb-2">
-              {portfolio.ai_summary.generated_by === 'claude' ? 'Claude API' : 'Offline fallback'}
+              {portfolio.ai_summary.generated_by === 'claude' ? 'Live Analysis' : 'System Generated'}
             </p>
             <p className="text-2xl font-bold mb-4">{portfolio.ai_summary.headline}</p>
             <ul className="space-y-2 text-sm text-green-100">
@@ -201,7 +201,7 @@ function Portfolio({ onRetakeQuiz }) {
             <div>
               <h3 className="text-xl font-semibold text-slate-900">Budget-aligned options (auto)</h3>
               <p className="text-sm text-slate-500">
-                We fed your latest housing preferences directly into the claudehackathon-mlmodel.
+                We processed your latest housing preferences with our prediction model.
               </p>
             </div>
             <button
@@ -261,7 +261,7 @@ function Portfolio({ onRetakeQuiz }) {
             <div>
               <h3 className="text-xl font-semibold text-slate-900">NYC Source Congestion</h3>
               <p className="text-sm text-slate-500">
-                We only ingest feeds tied to New York City. Bring a CLAUDE_API_KEY to upgrade this block instantly.
+                We only ingest feeds tied to New York City for the most relevant insights.
               </p>
             </div>
             <span className="px-4 py-2 bg-slate-900 text-white rounded-full text-sm font-semibold">
