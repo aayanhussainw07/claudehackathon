@@ -6,8 +6,19 @@ set -euo pipefail
 PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$PROJECT_ROOT/backend"
 
-if [ -f requirements.txt ]; then
-  python -m pip install --no-cache-dir -r requirements.txt
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+
+if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
+  if command -v python >/dev/null 2>&1; then
+    PYTHON_BIN="python"
+  else
+    echo "❌ Neither python3 nor python is available on PATH."
+    exit 1
+  fi
 fi
 
-exec python app.py
+if [ -f requirements.txt ]; then
+  "$PYTHON_BIN" -m pip install --no-cache-dir -r requirements.txt
+fi
+
+exec "$PYTHON_BIN" app.py
