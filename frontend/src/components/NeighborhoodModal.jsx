@@ -246,7 +246,7 @@ const NeighborhoodModal = ({ neighborhood, onClose }) => {
                   </p>
                 ) : (
                   reviews.map((review, idx) => (
-                    <div key={idx} className="bg-slate-50 rounded-2xl p-6">
+                    <div key={review.author + '-' + review.date} className="bg-slate-50 rounded-2xl p-6">
                       <div className="flex justify-between items-start mb-3">
                         <div>
                           <h4 className="font-semibold text-slate-900">{review.author}</h4>
