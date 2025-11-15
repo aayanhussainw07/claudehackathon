@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
+import logo from '../components/logo.png'
 
 const NYC_STATS = [
   { label: 'Boroughs Covered', value: '5', detail: 'Manhattan to Staten Island' },
@@ -69,7 +70,17 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <h1 className="text-4xl md:text-6xl mt-3 font-black leading-tight">
+            <div className="flex items-center gap-4 mb-6">
+              <motion.img 
+                src={logo} 
+                alt="Boroughs Logo" 
+                className="h-12 w-auto"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              />
+            </div>
+            <h1 className="text-4xl md:text-6xl font-black leading-tight">
               Match with NYC neighborhoods based on your lifestyle preferences.
             </h1>
             <p className="mt-6 text-lg text-green-100 max-w-3xl">
@@ -142,7 +153,7 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
       </section>
 
       {/* "How it Works" Section - Horizontal Layout */}
-      <section 
+      <section
         className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 py-16"
       >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-green-900/20 via-slate-900 to-slate-900"></div>
@@ -286,8 +297,8 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
           </motion.div>
           <div className="grid md:grid-cols-3 gap-6">
             {SOURCE_FEED.map((item, index) => (
-              <motion.div 
-                key={item.source} 
+              <motion.div
+                key={item.source}
                 className="bg-slate-800/60 border border-white/10 rounded-xl p-6"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -355,7 +366,7 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
                 gradient: "from-green-600/20 to-green-800/20"
               }
             ].map((feature, index) => (
-              <motion.div 
+              <motion.div
                 key={feature.title}
                 className={`p-6 bg-gradient-to-br ${feature.gradient} bg-slate-950 border border-white/10 rounded-2xl relative overflow-hidden group`}
                 initial={{ opacity: 0, y: 50, rotateX: 15 }}

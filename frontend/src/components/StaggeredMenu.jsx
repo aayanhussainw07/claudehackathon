@@ -11,7 +11,7 @@ export const StaggeredMenu = ({
   displayItemNumbering = false,
   className,
   logoText = 'BOROUGHS',
-  menuButtonColor = '#10B981',
+  menuButtonColor = '#1ea608ff',
   openMenuButtonColor = '#000',
   changeMenuColorOnOpen = true,
   accentColor = '#10B981',

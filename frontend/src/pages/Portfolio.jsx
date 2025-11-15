@@ -94,17 +94,7 @@ function Portfolio({ onRetakeQuiz }) {
     <div className="min-h-screen bg-slate-50 py-12 px-4">
       <div className="max-w-6xl mx-auto space-y-10">
         <header className="flex flex-col gap-3">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors w-fit"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            <span className="font-medium">Back to Home</span>
-          </button>
-          <p className="uppercase text-sm tracking-[0.3em] text-primary">NYC Only</p>
-          <h1 className="text-4xl font-black text-slate-900">Your NYC housing portfolio</h1>
+          <h1 className="text-4xl mt-10 font-black text-slate-900">Your NYC housing portfolio</h1>
           <p className="text-slate-600 max-w-2xl">
             Weighted quiz signals are processed by our matching system.
             Every insight below references NYC neighborhoods only.

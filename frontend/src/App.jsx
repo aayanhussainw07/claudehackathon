@@ -41,19 +41,13 @@ function App() {
     { label: 'Map', ariaLabel: 'Explore the NYC map', link: '/map' }
   ]
 
-  const socialItems = [
-    { label: 'Email', link: 'mailto:contact@boroughs.com' },
-    { label: 'GitHub', link: 'https://github.com' }
-  ]
-
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
         <StaggeredMenu
           position="right"
           items={menuItems}
-          socialItems={socialItems}
-          displaySocials={true}
+          displaySocials={false}
           displayItemNumbering={false}
           menuButtonColor="#10B981"
           openMenuButtonColor="#000"

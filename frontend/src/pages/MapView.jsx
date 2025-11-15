@@ -114,21 +114,9 @@ function MapView() {
       {/* Sidebar */}
       <div className="w-96 bg-white shadow-lg overflow-y-auto">
         <div className="p-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            <span className="font-medium">Back</span>
-          </button>
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">
-            NYC Housing Map
+          <h1 className="text-2xl mt-20 font-bold text-gray-800 mb-4">
+            Map View
           </h1>
-          <p className="text-sm text-gray-500 mb-6">
-            Powered by our prediction model and NYC-only data sources.
-          </p>
 
           {/* Filters */}
           <div className="mb-6">
