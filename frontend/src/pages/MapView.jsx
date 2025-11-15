@@ -56,7 +56,7 @@ function MapView() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-gray-600">Analyzing neighborhoods...</p>
         </div>
       </div>
@@ -83,7 +83,7 @@ function MapView() {
             <select
               value={filterMode}
               onChange={(e) => setFilterMode(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
             >
               <option value="all">All Neighborhoods</option>
               <option value="affordable">Affordable Only</option>
@@ -112,7 +112,7 @@ function MapView() {
 
           {/* Selected Neighborhood Details */}
           {selectedNeighborhood && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <h3 className="text-xl font-bold text-gray-800 mb-2">
                 {selectedNeighborhood.name}
               </h3>
@@ -120,7 +120,7 @@ function MapView() {
               <div className="space-y-2 text-sm mb-4">
                 <div className="flex justify-between">
                   <span className="font-medium">Predicted Price:</span>
-                  <span className="font-bold text-blue-600">
+                  <span className="font-bold text-primary">
                     ${selectedNeighborhood.predicted_price.toLocaleString()}
                   </span>
                 </div>
@@ -141,7 +141,7 @@ function MapView() {
               </div>
 
               {selectedNeighborhood.ai_summary && (
-                <div className="mt-4 pt-4 border-t border-blue-200">
+                <div className="mt-4 pt-4 border-t border-green-200">
                   <h4 className="font-semibold mb-2">AI Summary</h4>
                   <p className="text-sm text-gray-700 mb-3">
                     {selectedNeighborhood.ai_summary.overall}
@@ -199,7 +199,7 @@ function MapView() {
                     ></div>
                   </div>
                   <div className="mt-2 flex gap-2 text-xs">
-                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
                       Score: {pred.combined_score.toFixed(0)}
                     </span>
                   </div>

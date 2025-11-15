@@ -27,7 +27,7 @@ function Portfolio() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-slate-600">Consolidating NYC sources with Claude…</p>
         </div>
       </div>
@@ -42,7 +42,7 @@ function Portfolio() {
           <p className="text-slate-500">{error || 'Please retake the lifestyle quiz to generate a portfolio.'}</p>
           <button
             onClick={() => navigate('/quiz')}
-            className="px-6 py-3 rounded-full bg-blue-600 text-white font-semibold"
+            className="px-6 py-3 rounded-full bg-primary text-white font-semibold"
           >
             Go to Quiz
           </button>
@@ -55,7 +55,7 @@ function Portfolio() {
     <div className="min-h-screen bg-slate-50 py-12 px-4">
       <div className="max-w-6xl mx-auto space-y-10">
         <header className="flex flex-col gap-3">
-          <p className="uppercase text-sm tracking-[0.3em] text-blue-500">NYC Only</p>
+          <p className="uppercase text-sm tracking-[0.3em] text-primary">NYC Only</p>
           <h1 className="text-4xl font-black text-slate-900">Your NYC housing portfolio</h1>
           <p className="text-slate-600 max-w-2xl">
             Weighted quiz signals are sent to claudehackathon-mlmodel plus Claude AI.
@@ -65,16 +65,16 @@ function Portfolio() {
 
         <section className="grid md:grid-cols-3 gap-6">
           <div className="md:col-span-2 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-            <p className="text-sm uppercase tracking-[0.3em] text-blue-400 mb-3">Persona</p>
+            <p className="text-sm uppercase tracking-[0.3em] text-green-400 mb-3">Persona</p>
             <h2 className="text-3xl font-bold text-slate-900">{portfolio.persona.title}</h2>
             <p className="text-lg text-slate-500 mb-4">{portfolio.persona.tagline}</p>
             <p className="text-slate-600">{portfolio.persona.description}</p>
-            <div className="mt-6 flex flex-wrap gap-4 text-sm text-blue-600 font-semibold">
-              <span className="px-3 py-1 bg-blue-50 rounded-full">
+            <div className="mt-6 flex flex-wrap gap-4 text-sm text-primary font-semibold">
+              <span className="px-3 py-1 bg-green-50 rounded-full">
                 NYC Focus: {portfolio.persona.nyc_focus}
               </span>
               {portfolio.persona.priorities?.map((priority) => (
-                <span key={priority} className="px-3 py-1 bg-blue-50 rounded-full">
+                <span key={priority} className="px-3 py-1 bg-green-50 rounded-full">
                   {priority}
                 </span>
               ))}
@@ -82,11 +82,11 @@ function Portfolio() {
           </div>
           <div className="bg-slate-900 text-white rounded-3xl p-8 border border-slate-800 shadow-lg">
             <h3 className="text-xl font-semibold mb-4">Claude summary</h3>
-            <p className="text-sm uppercase tracking-[0.4em] text-blue-300 mb-2">
+            <p className="text-sm uppercase tracking-[0.4em] text-green-300 mb-2">
               {portfolio.ai_summary.generated_by === 'claude' ? 'Claude API' : 'Offline fallback'}
             </p>
             <p className="text-2xl font-bold mb-4">{portfolio.ai_summary.headline}</p>
-            <ul className="space-y-2 text-sm text-blue-100">
+            <ul className="space-y-2 text-sm text-green-100">
               {(portfolio.ai_summary.insights || []).map((insight, idx) => (
                 <li key={idx}>• {insight}</li>
               ))}
@@ -107,7 +107,7 @@ function Portfolio() {
                   </div>
                   <div className="w-full bg-slate-100 h-2 rounded-full mt-2">
                     <div
-                      className="h-2 rounded-full bg-blue-500"
+                      className="h-2 rounded-full bg-primary"
                       style={{ width: `${Math.min(100, pref.weight)}%` }}
                     ></div>
                   </div>
@@ -127,7 +127,7 @@ function Portfolio() {
                       <p className="text-lg font-semibold text-slate-900">{hood.name}</p>
                       <p className="text-sm text-slate-500">{hood.borough} • Score {hood.score}</p>
                     </div>
-                    <span className="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                    <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">
                       Lifestyle
                     </span>
                   </div>
@@ -166,7 +166,7 @@ function Portfolio() {
           <div className="mt-6 grid md:grid-cols-2 gap-4">
             {(portfolio.sources || []).map((source) => (
               <div key={source.headline} className="border border-slate-100 rounded-2xl p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-blue-500">{source.borough}</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-primary">{source.borough}</p>
                 <h4 className="text-lg font-semibold text-slate-900 mt-2">{source.headline}</h4>
                 <p className="text-sm text-slate-600 mt-2">{source.summary}</p>
                 <p className="text-xs text-slate-400 mt-3">{source.source}</p>
@@ -182,7 +182,7 @@ function Portfolio() {
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => navigate('/housing')}
-              className="px-6 py-3 rounded-full bg-blue-600 text-white font-semibold"
+              className="px-6 py-3 rounded-full bg-primary text-white font-semibold"
             >
               Set Housing Budget
             </button>

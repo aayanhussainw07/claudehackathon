@@ -189,7 +189,7 @@ function Quiz({ setQuizCompleted }) {
             </p>
             <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
               <div
-                className="bg-blue-500 h-2 rounded-full transition-all"
+                className="bg-primary h-2 rounded-full transition-all"
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
@@ -217,13 +217,13 @@ function Quiz({ setQuizCompleted }) {
                       onChange={(e) =>
                         handleChange(question.key, parseInt(e.target.value))
                       }
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
                     />
                     <div className="flex justify-between mt-2">
                       <span className="text-sm text-gray-600">
                         {question.leftLabel || question.min}
                       </span>
-                      <span className="text-lg font-bold text-blue-500">
+                      <span className="text-lg font-bold text-primary">
                         {answers[question.key]}
                       </span>
                       <span className="text-sm text-gray-600">
@@ -237,7 +237,7 @@ function Quiz({ setQuizCompleted }) {
                   <select
                     value={answers[question.key]}
                     onChange={(e) => handleChange(question.key, e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
                   >
                     {question.options.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -261,7 +261,7 @@ function Quiz({ setQuizCompleted }) {
             <button
               onClick={handleNext}
               disabled={loading}
-              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+              className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
             >
               {loading
                 ? 'Saving...'

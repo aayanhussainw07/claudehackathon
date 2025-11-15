@@ -46,7 +46,7 @@ function HousingInput() {
                 step={50000}
                 value={formData.budget}
                 onChange={(e) => handleChange('budget', parseInt(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
               />
               <div className="flex justify-between text-sm text-gray-600 mt-1">
                 <span>$100K</span>
@@ -62,7 +62,7 @@ function HousingInput() {
                 <select
                   value={formData.beds}
                   onChange={(e) => handleChange('beds', parseInt(e.target.value))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
                 >
                   {[0, 1, 2, 3, 4, 5].map((num) => (
                     <option key={num} value={num}>
@@ -79,7 +79,7 @@ function HousingInput() {
                 <select
                   value={formData.baths}
                   onChange={(e) => handleChange('baths', parseInt(e.target.value))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
                 >
                   {[1, 1.5, 2, 2.5, 3].map((num) => (
                     <option key={num} value={num}>
@@ -97,7 +97,7 @@ function HousingInput() {
               <select
                 value={formData.propertyType}
                 onChange={(e) => handleChange('propertyType', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
               >
                 <option value="CONDO">Condo</option>
                 <option value="HOUSE">House</option>
@@ -117,7 +117,7 @@ function HousingInput() {
                 step={100}
                 value={formData.propertySqft}
                 onChange={(e) => handleChange('propertySqft', parseInt(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
               />
               <div className="flex justify-between text-sm text-gray-600 mt-1">
                 <span>500</span>
@@ -132,7 +132,7 @@ function HousingInput() {
               <select
                 value={formData.yearsFuture}
                 onChange={(e) => handleChange('yearsFuture', parseInt(e.target.value))}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
               >
                 <option value={0}>Current Prices</option>
                 <option value={1}>1 Year</option>
@@ -146,9 +146,9 @@ function HousingInput() {
               </p>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-semibold text-blue-900 mb-2">NYC Summary</h3>
-              <ul className="text-sm text-blue-800 space-y-1">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h3 className="font-semibold text-green-900 mb-2">NYC Summary</h3>
+              <ul className="text-sm text-green-800 space-y-1">
                 <li>Budget: ${formData.budget.toLocaleString()}</li>
                 <li>
                   {formData.beds === 0 ? 'Studio' : `${formData.beds} bed`}, {formData.baths} bath
@@ -163,7 +163,7 @@ function HousingInput() {
 
             <button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition"
+              className="w-full bg-primary hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition"
             >
               Find My Neighborhoods
             </button>

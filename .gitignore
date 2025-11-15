@@ -16,10 +16,8 @@ instance/
 .webassets-cache
 
 # Data
-backend/data/users.json
+backend/data/
 
-# ML Models (optional - comment out if you want to commit models)
-# backend/models/*.joblib
 
 # Node
 node_modules/

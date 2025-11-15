@@ -24,7 +24,7 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-green-600">
       <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold text-gray-800">
@@ -33,7 +33,7 @@ function Login() {
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="text-sm text-blue-500 hover:underline"
+            className="text-sm text-primary hover:underline"
           >
             Back to website
           </button>
@@ -44,13 +44,13 @@ function Login() {
 
         <div className="flex mb-6">
           <button
-            className={`flex-1 py-2 ${isLogin ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} rounded-l-lg transition`}
+            className={`flex-1 py-2 ${isLogin ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'} rounded-l-lg transition`}
             onClick={() => setIsLogin(true)}
           >
             Login
           </button>
           <button
-            className={`flex-1 py-2 ${!isLogin ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} rounded-r-lg transition`}
+            className={`flex-1 py-2 ${!isLogin ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'} rounded-r-lg transition`}
             onClick={() => setIsLogin(false)}
           >
             Sign Up
@@ -66,7 +66,7 @@ function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="you@example.com"
               required
             />
@@ -80,7 +80,7 @@ function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="••••••••"
               required
             />
@@ -89,7 +89,7 @@ function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
+            className="w-full bg-primary hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
           >
             {loading ? 'Loading...' : isLogin ? 'Login' : 'Sign Up'}
           </button>
