@@ -69,8 +69,7 @@ function LandingPage({ quizCompleted, onRetakeQuiz }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <p className="uppercase tracking-[0.4em] text-sm text-green-200 mb-4">BOROUGHS</p>
-            <h1 className="text-4xl md:text-6xl font-black leading-tight">
+            <h1 className="text-4xl md:text-6xl mt-3 font-black leading-tight">
               Match with NYC neighborhoods based on your lifestyle preferences.
             </h1>
             <p className="mt-6 text-lg text-green-100 max-w-3xl">

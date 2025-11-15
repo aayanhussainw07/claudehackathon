@@ -6,6 +6,7 @@ import HousingInput from './pages/HousingInput'
 import MapView from './pages/MapView'
 import LandingPage from './pages/LandingPage'
 import Portfolio from './pages/Portfolio'
+import StaggeredMenu from './components/StaggeredMenu'
 
 function App() {
   const [quizCompleted, setQuizCompleted] = useState(false)
@@ -33,9 +34,36 @@ function App() {
     )
   }
 
+  const menuItems = [
+    { label: 'Home', ariaLabel: 'Go to home page', link: '/' },
+    { label: 'Quiz', ariaLabel: 'Take the lifestyle quiz', link: '/quiz' },
+    { label: 'Portfolio', ariaLabel: 'View your portfolio', link: '/portfolio' },
+    { label: 'Map', ariaLabel: 'Explore the NYC map', link: '/map' }
+  ]
+
+  const socialItems = [
+    { label: 'Email', link: 'mailto:contact@boroughs.com' },
+    { label: 'GitHub', link: 'https://github.com' }
+  ]
+
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
+        <StaggeredMenu
+          position="right"
+          items={menuItems}
+          socialItems={socialItems}
+          displaySocials={true}
+          displayItemNumbering={false}
+          menuButtonColor="#fff"
+          openMenuButtonColor="#000"
+          changeMenuColorOnOpen={true}
+          colors={['#10B981', '#059669']}
+          logoText="BOROUGHS"
+          accentColor="#10B981"
+          isFixed={true}
+        />
+
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route
