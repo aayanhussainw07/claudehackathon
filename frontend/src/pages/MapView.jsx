@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { MapContainer, TileLayer, CircleMarker } from 'react-leaflet'
+import { useNavigate } from 'react-router-dom'
 import { housingAPI } from '../utils/api'
 import 'leaflet/dist/leaflet.css'
 
 function MapView() {
+  const navigate = useNavigate()
   const [predictions, setPredictions] = useState([])
   const [loading, setLoading] = useState(true)
   const [filterMode, setFilterMode] = useState('all') // all, affordable, compatible
@@ -112,6 +114,15 @@ function MapView() {
       {/* Sidebar */}
       <div className="w-96 bg-white shadow-lg overflow-y-auto">
         <div className="p-6">
+          <button
+            onClick={() => navigate(-1)}
+            className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="font-medium">Back</span>
+          </button>
           <h1 className="text-2xl font-bold text-gray-800 mb-4">
             NYC Housing Map
           </h1>
