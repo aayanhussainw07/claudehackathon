@@ -46,6 +46,17 @@ const NeighborhoodModal = ({ neighborhood, onClose }) => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [onClose]);
+
+  useEffect(() => {
+    // Prevent body scroll when modal is open
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    
+    return () => {
+      // Restore original overflow when modal unmounts
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
   const handleSubmitReview = async (e) => {
     e.preventDefault();
     if (!newReview.author.trim() || !newReview.comment.trim()) {
