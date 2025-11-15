@@ -60,11 +60,16 @@ const NeighborhoodModal = ({ neighborhood, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div 
+        className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-slate-200 px-8 py-6 flex justify-between items-start rounded-t-3xl">
           <div>
-            <h2 className="text-3xl font-bold text-slate-900">{neighborhood.name}</h2>
+            <h2 id="modal-title" className="text-3xl font-bold text-slate-900">{neighborhood.name}</h2>
             <p className="text-lg text-slate-600 mt-1">
               {neighborhood.borough} • Score {neighborhood.score}
             </p>
@@ -72,6 +77,7 @@ const NeighborhoodModal = ({ neighborhood, onClose }) => {
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 text-2xl font-light"
+            aria-label="Close modal"
           >
             ×
           </button>
